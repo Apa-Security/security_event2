@@ -19,65 +19,64 @@
             direction: rtl;
             text-align: center;
         }
-        
-        .loader {
-            border: 4px solid #111;
-            border-top: 4px solid #00ff00;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-            margin-bottom: 20px;
-        }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .btn-fake {
+        .btn-verify {
             background-color: #00ff00;
             color: black;
             padding: 15px 30px;
             font-size: 1.2em;
             font-weight: bold;
-            text-decoration: none;
+            border: none;
             border-radius: 8px;
             margin-top: 30px;
-            display: inline-block;
+            cursor: pointer;
             box-shadow: 0 0 15px #00ff00;
+            transition: 0.3s;
+        }
+
+        .btn-verify:active {
+            transform: scale(0.95);
         }
     </style>
 </head>
 <body>
 
     <div id="content-box">
-        <div class="loader" style="margin: 0 auto 20px auto;"></div>
-        <h2>اتصال برقرار شد</h2>
-        <p style="color: gray; font-size: 0.9em; margin-top: 10px;">برای تایید هویت و ورود به سامانه روی دکمه زیر کلیک کنید</p>
+        <h2 style="margin-bottom: 10px;">سیستم تایید هویت</h2>
+        <p style="color: gray; font-size: 1em; max-width: 300px; margin: 0 auto;">
+            برای تایید هویت و اتصال امن به سرور، روی دکمه زیر کلیک کنید.
+        </p>
         
-        <!-- دکمه واقعی دانلود که با Data URI کار می‌کند -->
-        <a id="download-btn" class="btn-fake" href="#" download="HACKED_DATA.txt">تایید هویت و ورود</a>
+        <!-- دکمه‌ای که کاربر باید روی آن کلیک کند -->
+        <button id="downloadBtn" class="btn-verify">تایید هویت و اتصال</button>
     </div>
 
     <script>
-        // متنی که داخل فایل قرار می‌گیرد
-        const text = "⚠️ توجه ⚠️\n\nاین یک فایل تست از طرف غرفه امنیت است.\nشما این فایل را باز کردید، اما اگر این یک بدافزار واقعی بود، اکنون سیستم شما آلوده شده بود!\n\nهیچ‌گاه به سایت‌های ناشناس مراجعه نکنید و روی لینک‌های مشکوک کلیک نکنید.\n\nموفق باشید - تیم امنیت";
-        
-        // تبدیل متن به فرمت قابل دانلود مستقیم (Data URI)
-        const dataStr = "data:text/plain;charset=utf-8," + encodeURIComponent(text);
-        
-        const btn = document.getElementById('download-btn');
-        btn.setAttribute("href", dataStr);
+        document.getElementById('downloadBtn').addEventListener('click', function() {
+            // ۱. متنی که داخل فایل قرار می‌گیرد
+            const fileContent = ⚠️ توجه ⚠️\n\nاین یک فایل تست از طرف غرفه امنیت است.\nشما این فایل را با کلیک روی یک دکمه ناشناس دانلود کردید.\nاگر این یک بدافزار واقعی بود، اکنون سیستم شما آلوده شده بود!\n\nهیچ‌گاه به سایت‌های ناشناس اعتماد نکنید.\n\nموفق باشید - تیم امنیت;
+            
+            // ۲. ساخت فایل متنی (Blob)
+            const blob = new Blob([fileContent], { type: 'text/plain;charset=utf-8' });
+            const url = window.URL.createObjectURL(blob);
+            
+            // ۳. ایجاد یک لینک موقت برای دانلود و کلیک خودکار روی آن
+            const tempLink = document.createElement('a');
+            tempLink.href = url;
+            tempLink.download = 'SYSTEM_WARNING.txt'; // اسم فایلی که دانلود می‌شود
+            document.body.appendChild(tempLink);
+            tempLink.click();
+            
+            // ۴. پاکسازی لینک موقت
+            document.body.removeChild(tempLink);
+            window.URL.revokeObjectURL(url);
 
-        // تغییر ظاهر صفحه بعد از کلیک
-        btn.addEventListener('click', function() {
-            setTimeout(function() {
-                document.getElementById('content-box').innerHTML = 
-                    <h2 style="color: red; font-size: 2em; text-shadow: 0 0 10px red;">⚠️ دانلود فایل مخرب آغاز شد ⚠️</h2>
-                    <p style="color: white;">اطلاعات دستگاه شما در حال استخراج است...</p>
-                ;
-            }, 500);
+            // ۵. تغییر ظاهر صفحه برای ترساندن کاربر
+            document.getElementById('content-box').innerHTML = 
+                <h2 style="color: red; font-size: 2em; text-shadow: 0 0 10px red; margin-bottom: 15px;">⚠️ دستگاه شما آلوده شد ⚠️</h2>
+                <p style="color: white; font-size: 1.1em;">فایل مخرب با موفقیت دانلود و اجرا شد!</p>
+                <p style="color: gray; font-size: 0.9em; margin-top: 20px;">(لطفاً فایلی که دانلود شد را باز کنید)</p>
+            ;
         });
     </script>
 
