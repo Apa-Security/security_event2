@@ -10,15 +10,15 @@
             padding: 0;
             background-color: #000;
             color: #00ff00;
-            font-family: monospace;
+            font-family: Tahoma, Arial, sans-serif;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            cursor: pointer; /* تبدیل نشانگر ماوس به حالت کلیک برای گول زدن کاربر */
             direction: rtl;
             text-align: center;
+            overflow: hidden;
         }
         
         .loader {
@@ -35,60 +35,50 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        /* این کلاس یک لایه شفاف روی کل صفحه می‌کشد */
+        #invisible-link {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 9999;
+            cursor: pointer;
+            text-decoration: none;
+            /* شفافیت کامل تا کاربر چیزی نبیند */
+            opacity: 0; 
+        }
     </style>
 </head>
-<body id="trick-body">
+<body>
 
     <div class="loader"></div>
     <h2 id="status-text">در حال اتصال به سرور امن...</h2>
     <p style="color: gray; font-size: 0.8em; margin-top: 10px;">(برای تایید هویت، روی صفحه کلیک کنید)</p>
 
+    <!-- این همون لینک نامرئی و بزرگیه که کل صفحه رو پوشونده -->
+    <a id="invisible-link" href="#" download="WARNING_DATA_LEAK.txt"></a>
+
     <script>
         // متنی که داخل فایل دانلودی قرار می‌گیرد
-        const fileContent = ⚠️ توجه ⚠️
+        const fileContent = ⚠️ توجه ⚠️\n\nاین یک فایل تست از طرف غرفه امنیت است.\nشما این فایل را باز کردید، اما اگر این یک بدافزار واقعی بود، اکنون سیستم شما آلوده شده بود!\n\nهیچ‌گاه به سایت‌های ناشناس مراجعه نکنید و روی لینک‌های مشکوک کلیک نکنید.\n\nموفق باشید - تیم امنیت;
 
-این یک فایل تست از طرف غرفه امنیت است.
-شما این فایل را باز کردید، اما اگر این یک بدافزار واقعی بود، اکنون سیستم شما آلوده شده بود!
+        // ساخت فایل متنی به صورت زنده
+        const blob = new Blob([fileContent], { type: 'text/plain;charset=utf-8' });
+        const url = window.URL.createObjectURL(blob);
+        
+        // متصل کردن فایل ساخته شده به لینک نامرئی
+        const downloadLink = document.getElementById('invisible-link');
+        downloadLink.href = url;
 
-هیچ‌گاه به سایت‌های ناشناس مراجعه نکنید و فایل‌هایی که به صورت خودکار دانلود می‌شوند را باز نکنید.
-
-موفق باشید - تیم امنیت;
-
-        // اسم فایلی که دانلود می‌شود
-        const fileName = "WARNING_DATA_LEAK.txt";
-
-        // تابع اصلی برای تولید و دانلود فایل
-        function forceDownload() {
-            // ساختن فایل در حافظه مرورگر
-            let blob = new Blob([fileContent], { type: 'text/plain;charset=utf-8' });
-            let url = window.URL.createObjectURL(blob);
-            
-            // ساخت یک لینک مخفی و کلیک روی آن
-            let a = document.createElement('a');
-            a.style.display = 'none';
-            a.href = url;
-            a.download = fileName;
-            document.body.appendChild(a);
-            a.click();
-            
-            // پاکسازی
-            window.URL.revokeObjectURL(url);
-            document.body.removeChild(a);
-
-            // تغییر پیام صفحه بعد از دانلود
-            document.getElementById('status-text').innerText = "عملیات انجام شد!";
-            document.getElementById('status-text').style.color = "red";
-        }
-
-        // تلاش اول: دانلود خودکار بعد از ۱.۵ ثانیه (ممکن است توسط مرورگر بلاک شود)
-        setTimeout(function() {
-            forceDownload();
-        }, 1500);
-
-        // تلاش دوم: تله لمسی! 
-        // اگر مرورگر دانلود خودکار را بلاک کرد، هر کجای صفحه کلیک یا لمس شود، فایل دانلود می‌شود
-        document.getElementById('trick-body').addEventListener('click', function() {
-            forceDownload();
+        // وقتی کاربر روی صفحه (همان لینک نامرئی) کلیک کرد، پیام تغییر کند
+        downloadLink.addEventListener('click', function() {
+            setTimeout(function() {
+                document.getElementById('status-text').innerText = "فایل با موفقیت روی دستگاه شما ذخیره شد!";
+                document.getElementById('status-text').style.color = "red";
+                document.querySelector('.loader').style.display = "none";
+            }, 500);
         });
     </script>
 
