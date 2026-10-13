@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>در حال انتقال...</title>
+    <title>تایید هویت</title>
     <style>
         body {
             margin: 0;
@@ -18,7 +18,6 @@
             height: 100vh;
             direction: rtl;
             text-align: center;
-            overflow: hidden;
         }
         
         .loader {
@@ -36,48 +35,48 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* این کلاس یک لایه شفاف روی کل صفحه می‌کشد */
-        #invisible-link {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: 9999;
-            cursor: pointer;
+        .btn-fake {
+            background-color: #00ff00;
+            color: black;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            font-weight: bold;
             text-decoration: none;
-            /* شفافیت کامل تا کاربر چیزی نبیند */
-            opacity: 0; 
+            border-radius: 8px;
+            margin-top: 30px;
+            display: inline-block;
+            box-shadow: 0 0 15px #00ff00;
         }
     </style>
 </head>
 <body>
 
-    <div class="loader"></div>
-    <h2 id="status-text">در حال اتصال به سرور امن...</h2>
-    <p style="color: gray; font-size: 0.8em; margin-top: 10px;">(برای تایید هویت، روی صفحه کلیک کنید)</p>
-
-    <!-- این همون لینک نامرئی و بزرگیه که کل صفحه رو پوشونده -->
-    <a id="invisible-link" href="#" download="WARNING_DATA_LEAK.txt"></a>
+    <div id="content-box">
+        <div class="loader" style="margin: 0 auto 20px auto;"></div>
+        <h2>اتصال برقرار شد</h2>
+        <p style="color: gray; font-size: 0.9em; margin-top: 10px;">برای تایید هویت و ورود به سامانه روی دکمه زیر کلیک کنید</p>
+        
+        <!-- دکمه واقعی دانلود که با Data URI کار می‌کند -->
+        <a id="download-btn" class="btn-fake" href="#" download="HACKED_DATA.txt">تایید هویت و ورود</a>
+    </div>
 
     <script>
-        // متنی که داخل فایل دانلودی قرار می‌گیرد
-        const fileContent = ⚠️ توجه ⚠️\n\nاین یک فایل تست از طرف غرفه امنیت است.\nشما این فایل را باز کردید، اما اگر این یک بدافزار واقعی بود، اکنون سیستم شما آلوده شده بود!\n\nهیچ‌گاه به سایت‌های ناشناس مراجعه نکنید و روی لینک‌های مشکوک کلیک نکنید.\n\nموفق باشید - تیم امنیت;
-
-        // ساخت فایل متنی به صورت زنده
-        const blob = new Blob([fileContent], { type: 'text/plain;charset=utf-8' });
-        const url = window.URL.createObjectURL(blob);
+        // متنی که داخل فایل قرار می‌گیرد
+        const text = "⚠️ توجه ⚠️\n\nاین یک فایل تست از طرف غرفه امنیت است.\nشما این فایل را باز کردید، اما اگر این یک بدافزار واقعی بود، اکنون سیستم شما آلوده شده بود!\n\nهیچ‌گاه به سایت‌های ناشناس مراجعه نکنید و روی لینک‌های مشکوک کلیک نکنید.\n\nموفق باشید - تیم امنیت";
         
-        // متصل کردن فایل ساخته شده به لینک نامرئی
-        const downloadLink = document.getElementById('invisible-link');
-        downloadLink.href = url;
+        // تبدیل متن به فرمت قابل دانلود مستقیم (Data URI)
+        const dataStr = "data:text/plain;charset=utf-8," + encodeURIComponent(text);
+        
+        const btn = document.getElementById('download-btn');
+        btn.setAttribute("href", dataStr);
 
-        // وقتی کاربر روی صفحه (همان لینک نامرئی) کلیک کرد، پیام تغییر کند
-        downloadLink.addEventListener('click', function() {
+        // تغییر ظاهر صفحه بعد از کلیک
+        btn.addEventListener('click', function() {
             setTimeout(function() {
-                document.getElementById('status-text').innerText = "فایل با موفقیت روی دستگاه شما ذخیره شد!";
-                document.getElementById('status-text').style.color = "red";
-                document.querySelector('.loader').style.display = "none";
+                document.getElementById('content-box').innerHTML = 
+                    <h2 style="color: red; font-size: 2em; text-shadow: 0 0 10px red;">⚠️ دانلود فایل مخرب آغاز شد ⚠️</h2>
+                    <p style="color: white;">اطلاعات دستگاه شما در حال استخراج است...</p>
+                ;
             }, 500);
         });
     </script>
